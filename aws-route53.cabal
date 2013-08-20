@@ -2,15 +2,15 @@
 -- documentation, see http://haskell.org/cabal/users-guide/
 
 name:                aws-route53
-version:             0.0.0.0
--- synopsis:            
--- description:         
+version:             0.0.1
+synopsis:            Route53 plugin for the aws package
+description:         Route53 plugin for the aws package
 license:             BSD3
 license-file:        LICENSE
 author:              Amit Aryeh Levy
 maintainer:          amit@amitlevy.com
 -- copyright:           
--- category:            
+category:            Web
 build-type:          Simple
 -- extra-source-files:  
 cabal-version:       >=1.10
@@ -31,7 +31,7 @@ Library
 
   Build-depends:
                        aws,
-                       base                 >= 4,
+                       base                 >= 4 && < 6,
                        bytestring           >= 0.9,
                        containers           >= 0.4,
                        failure              >= 0.2.0.1,
@@ -52,4 +52,13 @@ Library
     MultiParamTypeClasses,
     FlexibleInstances,
     OverloadedStrings
+
+Source-repository this
+  type: git
+  location: https://github.com/memcachier/aws-route53.git
+  tag: 0.0.1
+
+Source-repository head
+  type: git
+  location: https://github.com/memcachier/aws-route53.git
 
