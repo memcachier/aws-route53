@@ -1,4 +1,6 @@
-Copyright (c) 2013, Amit Aryeh Levy
+Copyright (c) 2013, Aristid Breitkreuz
+Copyright (c) 2013, AlephCloud Systems, Inc
+Copyright (c) 2013, MemCachier, Inc
 
 All rights reserved.
 
@@ -13,9 +15,10 @@ modification, are permitted provided that the following conditions are met:
       disclaimer in the documentation and/or other materials provided
       with the distribution.
 
-    * Neither the name of Amit Aryeh Levy nor the names of other
-      contributors may be used to endorse or promote products derived
-      from this software without specific prior written permission.
+    * Neither the name of Aristid Breitkreuz, AlephCloud Systems,
+      MemCachier nor the names of other contributors may be used to
+      endorse or promote products derived from this software without
+      specific prior written permission.
 
 THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
 "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -28,3 +31,4 @@ DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
 THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
