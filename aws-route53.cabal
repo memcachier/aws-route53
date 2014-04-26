@@ -52,7 +52,7 @@ Library
 Source-repository this
   type: git
   location: https://github.com/memcachier/aws-route53.git
-  tag: 0.0.2
+  tag: 0.1.0
 
 Source-repository head
   type: git
