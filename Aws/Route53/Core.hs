@@ -73,6 +73,7 @@ import           Data.Monoid
 import           Data.String
 import           Data.Typeable
 import           Control.Monad             (MonadPlus, mzero, mplus, liftM)
+import           Control.Monad.Trans.Resource (MonadThrow(..))
 import           Data.List                 (find)
 import           Data.Map                  (insert, empty)
 import           Data.Maybe                (fromMaybe, listToMaybe, fromJust)
@@ -85,7 +86,6 @@ import           Text.Hamlet.XML           (xml)
 import           Text.XML                  (elementAttributes)
 import           Text.XML.Cursor           (($/), ($//), (&|), ($.//), laxElement)
 import qualified Control.Exception         as C
-import qualified Control.Failure           as F
 import qualified Data.ByteString           as B
 import qualified Data.Text                 as T
 import qualified Data.Text.Encoding        as T
@@ -233,10 +233,10 @@ route53ResponseConsumer inner metadataRef response =
       fromError cursor = do
         errCode    <- force "Missing Error Code"    $ cursor $// elContent "Code"
         errMessage <- force "Missing Error Message" $ cursor $// elContent "Message"
-        F.failure $ Route53Error status errCode errMessage
+        throwM $ Route53Error status errCode errMessage
 
 
-route53CheckResponseType :: F.Failure XmlException m => a -> Text -> Cu.Cursor -> m a
+route53CheckResponseType :: MonadThrow m => a -> Text -> Cu.Cursor -> m a
 route53CheckResponseType a n c = do 
     _ <- force ("Expected response type " ++ unpack n) (Cu.laxElement n c)
     return a
@@ -532,12 +532,12 @@ instance Route53Parseable ChangeInfo where
 --  could be derived from the instance declaration. Maybe some DLS would be a goold solution
 
 class Route53Parseable r where
-  r53Parse :: F.Failure XmlException m => Cu.Cursor -> m r
+  r53Parse :: MonadThrow m => Cu.Cursor -> m r
 
 -- | Takes the first @n@ elements from a List and injects them into a 'MonadPlus'. 
 --   Causes a failure in the 'Control.Failure' Monad if there are not enough elements 
 --   in the List. 
-forceTake :: (F.Failure XmlException f, MonadPlus m) => Int -> String -> [a] -> f (m a)
+forceTake :: (MonadThrow f, MonadPlus m) => Int -> String -> [a] -> f (m a)
 forceTake 0 _ _ = return mzero
 forceTake _ e [] = force e []
 forceTake n e l = do 
