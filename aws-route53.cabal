@@ -1,5 +1,5 @@
 name:                aws-route53
-version:             0.0.2
+version:             0.1.0
 synopsis:            Route53 plugin for the aws package
 description:         Route53 plugin for the aws package
 license:             BSD3
