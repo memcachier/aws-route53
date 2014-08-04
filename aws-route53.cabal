@@ -10,7 +10,7 @@ author:              Aristid Breitkreuz; AlephCloud Systems, Inc; MemCachier, In
 category:            Web
 build-type:          Simple
 cabal-version:       >=1.10
-extra-source-files:  CHANGELOG.md
+extra-source-files:  CHANGELOG.md, CONTRIBUTORS.md
 
 Library
   Exposed-modules:
