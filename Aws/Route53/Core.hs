@@ -432,8 +432,7 @@ instance Route53XmlSerializable ResourceRecordSet where
     <Name>#{dText rrsName}
     <Type>#{typeToText rrsType}
     $maybe a <- rrsAliasTarget
-      <AliasTarget>
-        ^{[XML.NodeElement (toXml a)]}
+      ^{[XML.NodeElement (toXml a)]}
     $maybe i <- rrsSetIdentifier 
       <SetIdentifier>#{i}
     $maybe w <- rrsWeight
@@ -442,9 +441,10 @@ instance Route53XmlSerializable ResourceRecordSet where
       <Region>#{regionToText r}
     $maybe t <- rrsTTL
       <TTL>#{intToText t}
-    <ResourceRecords>
-      $forall record <- rrsRecords
-        ^{[XML.NodeElement (toXml record)]}
+    $if not (null rrsRecords)
+      <ResourceRecords>
+        $forall record <- rrsRecords
+          ^{[XML.NodeElement (toXml record)]}
     |]
 
 instance Route53XmlSerializable ResourceRecord where
