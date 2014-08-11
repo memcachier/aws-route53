@@ -20,7 +20,7 @@ import           Data.Map                   (empty)
 import qualified Text.XML                   as XML
 import qualified Data.ByteString            as B
 
-data ACTION = CREATE | DELETE 
+data ACTION = CREATE | DELETE | UPSERT
             deriving (Show)
 
 -- TODO enforce constrains either via type or dynamically on creation or usage
