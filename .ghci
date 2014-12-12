@@ -1,0 +1,17 @@
+:set -XRecordWildCards
+:set -XTypeFamilies
+:set -XMultiParamTypeClasses
+:set -XFlexibleContexts
+:set -XFlexibleInstances
+:set -XFunctionalDependencies
+:set -XDataKinds
+:set -XKindSignatures
+:set -XDeriveFunctor
+:set -XDeriveDataTypeable
+:set -XOverloadedStrings
+:set -XTupleSections
+:set -XScopedTypeVariables
+:set -XRank2Types
+:set -XQuasiQuotes
+:set -XGeneralizedNewtypeDeriving
+:set -optP-include -optPdist/build/autogen/cabal_macros.h
