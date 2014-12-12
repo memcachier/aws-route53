@@ -38,6 +38,14 @@ data ListResourceRecordSets = ListResourceRecordSets
 listResourceRecordSets :: HostedZoneId -> ListResourceRecordSets
 listResourceRecordSets hostedZoneId = ListResourceRecordSets hostedZoneId Nothing Nothing Nothing Nothing
 
+-- | Construct the next request for resources if the last request was
+-- truncated. Otherwise, return @Nothing@.
+nextResourceRecordSet :: HostedZoneId -> ListResourceRecordSetsResponse -> Maybe ListResourceRecordSets
+{-# INLINE nextResourceRecordSet #-}
+nextResourceRecordSet hostedZoneId lrrsr
+    | not (lrrsrIsTruncated lrrsr) = Nothing
+    | otherwise                    = Just $ ListResourceRecordSets hostedZoneId (lrrsrNextRecordName lrrsr) Nothing Nothing Nothing
+
 data ListResourceRecordSetsResponse = ListResourceRecordSetsResponse
                              { lrrsrResourceRecordSets :: ResourceRecordSets
                              , lrrsrIsTruncated :: Bool
@@ -86,12 +94,4 @@ instance IteratedTransaction ListResourceRecordSets ListResourceRecordSetsRespon
                                         lrrsrNextRecordType 
                                         lrrsrNextRecordIdentifier 
                                         lrrsrMaxItems
-{-    combineIteratedResponse a b = ListResourceRecordSetsResponse
-           { lrrsrResourceRecordSets = lrrsrResourceRecordSets a ++ lrrsrResourceRecordSets b
-           , lrrsrIsTruncated = lrrsrIsTruncated b
-           , lrrsrNextRecordName = lrrsrNextRecordName b
-           , lrrsrNextRecordType = lrrsrNextRecordType b
-           , lrrsrNextRecordIdentifier = lrrsrNextRecordIdentifier b
-           , lrrsrMaxItems = lrrsrMaxItems b
-           }-}
 
