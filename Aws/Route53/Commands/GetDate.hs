@@ -1,3 +1,4 @@
+{-# LANGUAGE GeneralizedNewtypeDeriving #-}
 -- ------------------------------------------------------ --
 -- Copyright © 2012 AlephCloud Systems, Inc.
 -- ------------------------------------------------------ --
@@ -14,6 +15,7 @@ module Aws.Route53.Commands.GetDate where
 import           Aws.Core
 import           Aws.Route53.Core
 import           Data.Maybe
+import           Data.Monoid
 import           Data.Time                  (UTCTime)
 import           Data.Time.Format           (parseTime)
 import           System.Locale              (defaultTimeLocale)
@@ -45,8 +47,13 @@ instance SignQuery GetDate where
     , sqStringToSign = ""
     }
 
+newtype Empty = Empty () deriving (Monoid)
+
+instance Loggable Empty where
+  toLogText _ = ""
+
 instance ResponseConsumer r GetDateResponse where
-  type ResponseMetadata GetDateResponse = ()
+  type ResponseMetadata GetDateResponse = Empty
   responseConsumer _ _ resp = return $ GetDateResponse date
     where
     -- TODO add proper error handling
@@ -60,5 +67,3 @@ getDate = GetDate
 
 instance Transaction GetDate GetDateResponse
 
-instance Loggable () where
-  toLogText _ = ""
