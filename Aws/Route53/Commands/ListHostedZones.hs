@@ -1,3 +1,4 @@
+{-# LANGUAGE CPP #-}
 {-# LANGUAGE TupleSections #-}
 -- ------------------------------------------------------ --
 -- Copyright © 2012 AlephCloud Systems, Inc.
@@ -14,7 +15,9 @@ module Aws.Route53.Commands.ListHostedZones where
 import           Aws.Core
 import           Aws.Route53.Core
 import           Data.Maybe
+#if __GLASGOW_HASKELL__ < 710
 import           Control.Applicative        ((<$>), (<$))
+#endif
 import           Text.XML.Cursor            (($//))
 import qualified Data.Text                  as T
 import qualified Data.Text.Encoding         as T

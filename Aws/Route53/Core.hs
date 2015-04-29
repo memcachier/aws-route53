@@ -1,3 +1,4 @@
+{-# LANGUAGE CPP #-}
 {-# LANGUAGE QuasiQuotes, FlexibleContexts, TypeSynonymInstances #-}
 {-# LANGUAGE GeneralizedNewtypeDeriving, DeriveDataTypeable #-}
 {-# LANGUAGE ScopedTypeVariables #-}
@@ -69,7 +70,9 @@ module Aws.Route53.Core
 
 import           Aws.Core
 import           Data.IORef
+#if __GLASGOW_HASKELL__ < 710
 import           Data.Monoid
+#endif
 import           Data.String
 import           Data.Typeable
 import           Control.Monad             (MonadPlus, mzero, mplus, liftM)
@@ -80,8 +83,12 @@ import           Data.Maybe                (fromMaybe, listToMaybe, fromJust)
 import           Data.Text                 (Text, unpack)
 import           Data.Text.Encoding        (decodeUtf8)
 import           Data.Time                 (UTCTime)
+#if MIN_VERSION_time(1,5,0)
+import           Data.Time.Format          (parseTimeM, defaultTimeLocale)
+#else
 import           Data.Time.Format          (parseTime)
 import           System.Locale             (defaultTimeLocale)
+#endif
 import           Text.Hamlet.XML           (xml)
 import           Text.XML                  (elementAttributes)
 import           Text.XML.Cursor           (($/), ($//), (&|), ($.//), laxElement)
@@ -521,7 +528,11 @@ instance Route53Parseable ChangeInfo where
     submittedAt <- force "Missing SubmittedAt element" $ c $/ elCont "SubmittedAt" &| utcTime
     return $ ChangeInfo ciId status submittedAt
     where
+#if MIN_VERSION_time(1,5,0)
+    utcTime str = fromJust $ parseTimeM True defaultTimeLocale "%Y-%m-%dT%H:%M:%S%Q%Z" str
+#else
     utcTime str = fromJust $ parseTime defaultTimeLocale "%Y-%m-%dT%H:%M:%S%Q%Z" str
+#endif
 
 -- -------------------------------------------------------------------------- --
 -- Parser and Serialization Utilities
