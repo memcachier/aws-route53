@@ -1,3 +1,7 @@
+# 0.1.2 - 27th April, 2015
+
+* Fix compilation with GHC 7.10.
+
 # 0.1.1 - 4th August, 2014
 
 * Fix Alias target requests.
