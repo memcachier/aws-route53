@@ -1,3 +1,7 @@
+# 0.1.2.1 - 30th October, 2015
+
+* Fix warning with GHC 7.10.
+
 # 0.1.2 - 27th April, 2015
 
 * Fix compilation with GHC 7.10.
