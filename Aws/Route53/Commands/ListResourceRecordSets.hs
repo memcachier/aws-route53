@@ -1,3 +1,4 @@
+{-# LANGUAGE CPP #-}
 {-# LANGUAGE TupleSections #-}
 -- ------------------------------------------------------ --
 -- Copyright © 2012 AlephCloud Systems, Inc.
@@ -19,7 +20,9 @@ module Aws.Route53.Commands.ListResourceRecordSets where
 import           Aws.Core
 import           Aws.Route53.Core
 import           Data.Maybe                 (catMaybes, listToMaybe)
+#if __GLASGOW_HASKELL__ < 710
 import           Control.Applicative        ((<$>))
+#endif
 import           Control.Monad              (guard)
 import           Text.XML.Cursor            (($//), (&|), ($/))
 import qualified Data.Text                  as T
