@@ -116,7 +116,7 @@ data Route53Configuration qt = Route53Configuration
 instance DefaultServiceConfiguration (Route53Configuration NormalQuery) where
   defServiceConfig = route53
   debugServiceConfig = route53
-  
+
 instance DefaultServiceConfiguration (Route53Configuration UriOnlyQuery) where
   defServiceConfig = route53
   debugServiceConfig = route53
@@ -156,7 +156,7 @@ instance C.Exception Route53Error
 -- -------------------------------------------------------------------------- --
 -- Metadata
 
-data Route53Metadata = Route53Metadata 
+data Route53Metadata = Route53Metadata
     { requestId :: Maybe T.Text
     } deriving (Show, Typeable)
 
@@ -171,17 +171,17 @@ instance Monoid Route53Metadata where
 -- -------------------------------------------------------------------------- --
 -- Query
 
-route53SignQuery :: Method 
-                 -> B.ByteString 
-                 -> [(B.ByteString, B.ByteString)] 
-                 -> Maybe XML.Element 
-                 -> Route53Configuration qt 
-                 -> SignatureData 
+route53SignQuery :: Method
+                 -> B.ByteString
+                 -> [(B.ByteString, B.ByteString)]
+                 -> Maybe XML.Element
+                 -> Route53Configuration qt
+                 -> SignatureData
                  -> SignedQuery
 route53SignQuery method resource query body Route53Configuration{..} sd
     = SignedQuery {
         sqMethod        = method
-      , sqProtocol      = route53Protocol 
+      , sqProtocol      = route53Protocol
       , sqHost          = route53Endpoint
       , sqPort          = route53Port
       , sqPath          = route53ApiVersion `B.append` resource
@@ -206,13 +206,13 @@ route53SignQuery method resource query body Route53Configuration{..} sd
                                ]
       query' = ("AWSAccessKeyId", accessKeyId) : query
 
-      renderBody b = HTTP.RequestBodyLBS . XML.renderLBS XML.def $ XML.Document 
+      renderBody b = HTTP.RequestBodyLBS . XML.renderLBS XML.def $ XML.Document
                      { XML.documentPrologue = XML.Prologue [] Nothing []
                      , XML.documentRoot = b { elementAttributes = addNamespace (elementAttributes b) }
                      , XML.documentEpilogue = []
                      }
       addNamespace attrs = insert "xmlns" route53XmlNamespace attrs
-                           
+
 
 -- -------------------------------------------------------------------------- --
 -- Response
@@ -244,7 +244,7 @@ route53ResponseConsumer inner metadataRef response =
 
 
 route53CheckResponseType :: MonadThrow m => a -> Text -> Cu.Cursor -> m a
-route53CheckResponseType a n c = do 
+route53CheckResponseType a n c = do
     _ <- force ("Expected response type " ++ unpack n) (Cu.laxElement n c)
     return a
 
@@ -257,12 +257,12 @@ route53CheckResponseType a n c = do
 class Route53Id r where
   idQualifier :: r -> T.Text
   idText :: r -> T.Text
-  
+
   asId :: T.Text -> r
-  asId t = asId' . fromJust .T.stripPrefix (qualifiedIdTextPrefix (undefined::r)) $ t
+  asId t = asId' . fromJust . T.stripPrefix (qualifiedIdTextPrefix (undefined::r)) $ t
 
   qualifiedIdTextPrefix :: r -> T.Text
-  qualifiedIdTextPrefix r = "/" `T.append` idQualifier r `T.append` "/" 
+  qualifiedIdTextPrefix r = "/" `T.append` idQualifier r `T.append` "/"
 
   qualifiedIdText :: r -> T.Text
   qualifiedIdText r = qualifiedIdTextPrefix r `T.append` idText r
@@ -280,7 +280,7 @@ class Route53Id r where
 -- -------------------------------------------------------------------------- --
 -- DNS
 
-data RecordType = A | AAAA | NS | TXT | MX | CNAME | SOA | PTR | SRV | SPF | UNKNOWN Int 
+data RecordType = A | AAAA | NS | TXT | MX | CNAME | SOA | PTR | SRV | SPF | UNKNOWN Int
                 deriving (Eq, Show, Read)
 
 typeToString :: RecordType -> String
@@ -308,7 +308,7 @@ instance IsString Domain where
 
 type HostedZones = [HostedZone]
 
-data HostedZone = HostedZone 
+data HostedZone = HostedZone
                   { hzId :: HostedZoneId
                   , hzName :: Domain
                   , hzCallerReference :: T.Text
@@ -352,7 +352,7 @@ type Nameservers = [Nameserver]
 
 type Nameserver = Domain
 
-data DelegationSet = DelegationSet { dsNameserver1 :: Domain 
+data DelegationSet = DelegationSet { dsNameserver1 :: Domain
                                    , dsNameserver2 :: Domain
                                    , dsNameserver3 :: Domain
                                    , dsNameserver4 :: Domain
@@ -373,7 +373,7 @@ instance Route53Parseable Nameservers where
     sequence $ c $/ laxElement "Nameserver" &| r53Parse
 
 instance Route53Parseable Nameserver where
-  r53Parse cursor = 
+  r53Parse cursor =
     force "Missing Nameserver element" $ cursor $.// elContent "Nameserver" &| Domain
 
 -- -------------------------------------------------------------------------- --
@@ -430,7 +430,7 @@ data ResourceRecordSet = ResourceRecordSet { rrsName :: Domain
                                            , rrsTTL  :: Maybe Int
                                            , rrsRecords :: ResourceRecords
                                            } deriving (Show)
-                                           
+
 type ResourceRecordSets = [ResourceRecordSet]
 
 instance Route53XmlSerializable ResourceRecordSet where
@@ -440,7 +440,7 @@ instance Route53XmlSerializable ResourceRecordSet where
     <Type>#{typeToText rrsType}
     $maybe a <- rrsAliasTarget
       ^{[XML.NodeElement (toXml a)]}
-    $maybe i <- rrsSetIdentifier 
+    $maybe i <- rrsSetIdentifier
       <SetIdentifier>#{i}
     $maybe w <- rrsWeight
       <Weight>#{intToText w}
@@ -487,14 +487,19 @@ instance Route53Parseable ResourceRecordSet where
 instance Route53Parseable AliasTarget where
   r53Parse cursor = do
     c <- force "Missing AliasTarget element" $ cursor $.// laxElement "AliasTarget"
-    zoneId <- force "Missing HostedZoneId element" $ c $/ elContent "HostedZoneId" &| asId
+    -- Note: `HostedZoneId` does not come with a `/hostname/` prefix. It can be thus directly
+    -- passed to the `HostZoneId` constructer instead of to `asId`.
+    zoneId <- force "Missing HostedZoneId element" $ c $/ elContent "HostedZoneId" &| HostedZoneId
     dnsName <- force "Missing DNSName element" $ c $/ elContent "DNSName" &| Domain
     return $ AliasTarget zoneId dnsName
 
 instance Route53Parseable ResourceRecords where
   r53Parse cursor = do
-    c <- force "Missing ResourceRecords element" $ cursor $.// laxElement "ResourceRecords"
-    sequence $ c $/ laxElement "ResourceRecord" &| r53Parse
+    -- `resourceRecords` might actually be missing. Return empty list if so.
+    let c = listToMaybe $ cursor $.// laxElement "ResourceRecords"
+    case c of
+      Nothing -> return []
+      Just cur -> sequence $ cur $/ laxElement "ResourceRecord" &| r53Parse
 
 instance Route53Parseable ResourceRecord where
   r53Parse cursor = do
@@ -545,25 +550,25 @@ instance Route53Parseable ChangeInfo where
 class Route53Parseable r where
   r53Parse :: MonadThrow m => Cu.Cursor -> m r
 
--- | Takes the first @n@ elements from a List and injects them into a 'MonadPlus'. 
---   Causes a failure in the 'Control.Failure' Monad if there are not enough elements 
---   in the List. 
+-- | Takes the first @n@ elements from a List and injects them into a 'MonadPlus'.
+--   Causes a failure in the 'Control.Failure' Monad if there are not enough elements
+--   in the List.
 forceTake :: (MonadThrow f, MonadPlus m) => Int -> String -> [a] -> f (m a)
 forceTake 0 _ _ = return mzero
 forceTake _ e [] = force e []
-forceTake n e l = do 
+forceTake n e l = do
   h <- force e l
   t <- forceTake (n-1) e (tail l)
   return $ return h  `mplus` t
 
 class Route53XmlSerializable r where
-  toXml :: r -> XML.Element 
+  toXml :: r -> XML.Element
 
 intToText :: Int -> T.Text
 intToText = T.pack . show
 
 -- -------------------------------------------------------------------------- --
--- Utility methods that extend the functionality of 'Network.HTTP.Types' 
+-- Utility methods that extend the functionality of 'Network.HTTP.Types'
 
 hRequestId :: HTTP.HeaderName
 hRequestId = "x-amzn-requestid"
@@ -573,4 +578,3 @@ findHeader headers hName = find ((==hName).fst) headers
 
 findHeaderValue :: [HTTP.Header] -> HTTP.HeaderName -> Maybe B.ByteString
 findHeaderValue headers hName = lookup hName headers
-
