@@ -1,9 +1,19 @@
 # AWS Route53 Client
 
-[![Hackage version](https://img.shields.io/hackage/v/aws-route53.svg?style=flat)](https://hackage.haskell.org/package/aws-route53)
-[![Build Status](https://img.shields.io/travis/memcachier/aws-route53.svg?style=flat)](https://travis-ci.org/memcachier/aws-route53)
+[![Hackage](https://img.shields.io/hackage/v/aws-route53.svg?style=flat)](https://hackage.haskell.org/package/aws-route53)
+[![Hackage Dependencies](https://img.shields.io/hackage-deps/v/aws-route53.svg?style=flat)](http://packdeps.haskellers.com/reverse/aws-route53)
+[![BSD3 License](http://img.shields.io/badge/license-BSD3-brightgreen.svg?style=flat)][tl;dr Legal: BSD3]
+[![Build](https://img.shields.io/travis/memcachier/aws-route53.svg?style=flat)](https://travis-ci.org/memcachier/aws-route53)
+
+[tl;dr Legal: BSD3]:
+  https://tldrlegal.com/license/bsd-3-clause-license-(revised)
+  "BSD3 License"
 
 This is a Haskell AWS Route53 (DNS Service) client.
+
+## Licensing
+
+This library is BSD3-licensed.
 
 ## Get involved!
 
@@ -16,10 +26,6 @@ Please report bugs via the
 Master [git repository](http://github.com/memcachier/aws-route53):
 
 * `git clone git://github.com/memcachier/aws-route53.git`
-
-## Licensing
-
-BSD3 license.
 
 ## Authors
 
