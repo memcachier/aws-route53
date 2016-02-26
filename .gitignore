@@ -1,5 +1,9 @@
+*.hi
+*.o
+.DS_Store
 *~
 dist/*
 *.swp
 cabal.sandbox.config
 .cabal-sandbox/
+.stack-work
