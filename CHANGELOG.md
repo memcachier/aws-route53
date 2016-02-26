@@ -1,3 +1,7 @@
+# 0.1.2.2 - 26th February, 2016
+
+* Fix bug with decoding ResourceRecordSet.
+
 # 0.1.2.1 - 30th October, 2015
 
 * Fix warning with GHC 7.10.

@@ -1,5 +1,5 @@
 name:                aws-route53
-version:             0.1.2.1
+version:             0.1.2.2
 synopsis:            Amazon Route53 DNS service plugin for the aws package.
 description:         Amazon Route53 DNS service plugin for the aws package.
 license:             BSD3
@@ -55,7 +55,7 @@ Library
 Source-repository this
   type: git
   location: https://github.com/memcachier/aws-route53.git
-  tag: 0.1.2.1
+  tag: 0.1.2.2
 
 Source-repository head
   type: git
