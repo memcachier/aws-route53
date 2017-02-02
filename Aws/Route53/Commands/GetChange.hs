@@ -38,12 +38,11 @@ instance SignQuery GetChange where
 instance ResponseConsumer r GetChangeResponse where
     type ResponseMetadata GetChangeResponse = Route53Metadata
 
-    responseConsumer _ = route53ResponseConsumer parse
-        where 
+    responseConsumer _ _ = route53ResponseConsumer parse
+        where
         parse cursor = do
             route53CheckResponseType () "GetChangeResponse" cursor
             changeInfo <- r53Parse cursor
             return $ GetChangeResponse changeInfo
 
 instance Transaction GetChange GetChangeResponse
-

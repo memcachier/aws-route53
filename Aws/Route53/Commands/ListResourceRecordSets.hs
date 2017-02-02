@@ -7,9 +7,9 @@
 -- | GET ListResourceRecordSets
 --
 --   Lists the resource record sets for a Route53 hosted zone. The hosted zone is identified by
---   the hostedZoneId which is retrieved in the response to 'Aws.Route53.Commands.ListHostedZones' 
+--   the hostedZoneId which is retrieved in the response to 'Aws.Route53.Commands.ListHostedZones'
 --   or 'Aws.Route53.Commands.CreateHostedZone'.
--- 
+--
 --   <http://docs.amazonwebservices.com/Route53/latest/APIReference/API_ListResourceRecordSets.html>
 --
 --   NOTE: the parameter 'identifier' is required for weighted and latency resource record sets. This is
@@ -52,7 +52,7 @@ nextResourceRecordSet hostedZoneId lrrsr
 data ListResourceRecordSetsResponse = ListResourceRecordSetsResponse
                              { lrrsrResourceRecordSets :: ResourceRecordSets
                              , lrrsrIsTruncated :: Bool
-                             , lrrsrMaxItems :: Maybe Int                 -- ^ The maxitems value from the request 
+                             , lrrsrMaxItems :: Maybe Int                 -- ^ The maxitems value from the request
                              , lrrsrNextRecordName :: Maybe Domain        -- ^ TODO check constraint
                              , lrrsrNextRecordType :: Maybe RecordType    -- ^ TODO check constraint
                              , lrrsrNextRecordIdentifier :: Maybe T.Text  -- ^ TODO check constraint
@@ -75,7 +75,7 @@ instance SignQuery ListResourceRecordSets where
 instance ResponseConsumer r ListResourceRecordSetsResponse where
     type ResponseMetadata ListResourceRecordSetsResponse = Route53Metadata
 
-    responseConsumer _ = route53ResponseConsumer parser
+    responseConsumer _ _ = route53ResponseConsumer parser
         where
         parser cursor = do
             route53CheckResponseType () "ListResourceRecordSetsResponse" cursor
@@ -92,9 +92,8 @@ instance Transaction ListResourceRecordSets ListResourceRecordSetsResponse
 instance IteratedTransaction ListResourceRecordSets ListResourceRecordSetsResponse where
     nextIteratedRequest ListResourceRecordSets{..} ListResourceRecordSetsResponse{..} = do
         guard lrrsrIsTruncated
-        return $ ListResourceRecordSets lrrsHostedZoneId 
-                                        lrrsrNextRecordName 
-                                        lrrsrNextRecordType 
-                                        lrrsrNextRecordIdentifier 
+        return $ ListResourceRecordSets lrrsHostedZoneId
+                                        lrrsrNextRecordName
+                                        lrrsrNextRecordType
+                                        lrrsrNextRecordIdentifier
                                         lrrsrMaxItems
-

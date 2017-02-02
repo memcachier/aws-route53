@@ -46,12 +46,11 @@ instance SignQuery DeleteHostedZone where
 instance ResponseConsumer r DeleteHostedZoneResponse where
     type ResponseMetadata DeleteHostedZoneResponse = Route53Metadata
 
-    responseConsumer _ = route53ResponseConsumer parse
-        where 
+    responseConsumer _ _ = route53ResponseConsumer parse
+        where
         parse cursor = do
             route53CheckResponseType () "DeleteHostedZoneResponse" cursor
             changeInfo <- r53Parse cursor
             return $ DeleteHostedZoneResponse changeInfo
 
 instance Transaction DeleteHostedZone DeleteHostedZoneResponse
-

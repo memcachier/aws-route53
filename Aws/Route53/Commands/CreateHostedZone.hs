@@ -52,8 +52,8 @@ instance SignQuery CreateHostedZone where
 instance ResponseConsumer r CreateHostedZoneResponse where
     type ResponseMetadata CreateHostedZoneResponse = Route53Metadata
 
-    responseConsumer _ = route53ResponseConsumer parse
-        where 
+    responseConsumer _ _ = route53ResponseConsumer parse
+        where
         parse cursor = do
             route53CheckResponseType () "CreateHostedZoneResponse" cursor
             zone <- r53Parse cursor
@@ -62,4 +62,3 @@ instance ResponseConsumer r CreateHostedZoneResponse where
             return $ CreateHostedZoneResponse zone changeInfo delegationSet
 
 instance Transaction CreateHostedZone CreateHostedZoneResponse
-

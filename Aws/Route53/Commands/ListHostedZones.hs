@@ -50,8 +50,8 @@ instance SignQuery ListHostedZones where
 instance ResponseConsumer r ListHostedZonesResponse where
     type ResponseMetadata ListHostedZonesResponse = Route53Metadata
 
-    responseConsumer _ = route53ResponseConsumer parser
-        where 
+    responseConsumer _ _ = route53ResponseConsumer parser
+        where
         parser cursor = do
             route53CheckResponseType () "ListHostedZonesResponse" cursor
             zones <- r53Parse cursor
@@ -63,4 +63,3 @@ instance Transaction ListHostedZones ListHostedZonesResponse
 instance IteratedTransaction ListHostedZones ListHostedZonesResponse where
     nextIteratedRequest req ListHostedZonesResponse{ lhzrNextToken = nt } = req { lhzNextToken = nt } <$ nt
     --combineIteratedResponse (ListHostedZonesResponse z0 _) (ListHostedZonesResponse z1 nt) = ListHostedZonesResponse (z0 ++ z1) nt
-

@@ -10,7 +10,7 @@
 --   authenticating REST requests to Route53.
 --
 --   <http://docs.amazonwebservices.com/Route53/latest/DeveloperGuide/RESTAuthentication.html>
--- 
+--
 module Aws.Route53.Commands.GetDate where
 
 import           Aws.Core
@@ -38,7 +38,7 @@ newtype GetDateResponse = GetDateResponse { date :: UTCTime } deriving (Show)
 -- | ServiceConfiguration: 'Route53Configuration'
 instance SignQuery GetDate where
   type ServiceConfiguration GetDate = Route53Configuration
-  signQuery GetDate info sd = SignedQuery 
+  signQuery GetDate info sd = SignedQuery
     { sqMethod = Get
     , sqProtocol = route53Protocol info
     , sqHost = route53Endpoint info
@@ -62,7 +62,7 @@ instance Loggable Empty where
 
 instance ResponseConsumer r GetDateResponse where
   type ResponseMetadata GetDateResponse = Empty
-  responseConsumer _ _ resp = return $ GetDateResponse date
+  responseConsumer _ _ _ resp = return $ GetDateResponse date
     where
     -- TODO add proper error handling
     date = fromJust $ do
@@ -78,4 +78,3 @@ getDate :: GetDate
 getDate = GetDate
 
 instance Transaction GetDate GetDateResponse
-

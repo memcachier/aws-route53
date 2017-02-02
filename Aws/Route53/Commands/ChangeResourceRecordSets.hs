@@ -57,12 +57,11 @@ instance SignQuery ChangeResourceRecordSets where
 instance ResponseConsumer r ChangeResourceRecordSetsResponse where
     type ResponseMetadata ChangeResourceRecordSetsResponse = Route53Metadata
 
-    responseConsumer _ = route53ResponseConsumer parse
-        where 
+    responseConsumer _ _ = route53ResponseConsumer parse
+        where
         parse cursor = do
             route53CheckResponseType () "ChangeResourceRecordSetsResponse" cursor
             changeInfo <- r53Parse cursor
             return $ ChangeResourceRecordSetsResponse changeInfo
 
 instance Transaction ChangeResourceRecordSets ChangeResourceRecordSetsResponse
-
